@@ -458,6 +458,10 @@ EOF
 EOF
   fi
 
+  set -x
+
+  echo "======= ${ca_key} ${ca_key}"
+
   if [[ -n "${GEN_ETCD_CA_CERT}" && -n "${GEN_ETCD_CA_KEY}" ]]; then
     # ca_cert and ca_key are optional external vars supplied in cluster/gce/util.sh,
     # so it's ok to disable shellcheck here
