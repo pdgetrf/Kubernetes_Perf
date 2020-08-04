@@ -386,6 +386,7 @@ function find-release-tars() {
 #   $3 (the type of etcd certificates, must be one of client, server, peer)
 #   $4 (the prefix of the certificate filename, default is $3)
 function generate-etcd-cert() {
+  set -x
   local cert_dir=${1}
   local member_ip=${2}
   local type_cert=${3}
@@ -458,9 +459,8 @@ EOF
 EOF
   fi
 
-  set -x
 
-  echo "======= ${ca_key} ${ca_key}"
+  echo "======= 1 ${GEN_ETCD_CA_KEY} 2 ${GEN_ETCD_CA_CERT}"
 
   if [[ -n "${GEN_ETCD_CA_CERT}" && -n "${GEN_ETCD_CA_KEY}" ]]; then
     # ca_cert and ca_key are optional external vars supplied in cluster/gce/util.sh,

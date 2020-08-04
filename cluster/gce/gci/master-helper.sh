@@ -42,6 +42,8 @@ function create-master-instance {
 }
 
 function replicate-master-instance() {
+  echo "in replicate-master-instance"
+  set -x
   local existing_master_zone="${1}"
   local existing_master_name="${2}"
   local existing_master_replicas="${3}"
@@ -70,7 +72,9 @@ function replicate-master-instance() {
   ETCD_APISERVER_CA_CERT="$(echo "${master_certs}" | grep "ETCD_APISERVER_CA_CERT" |  sed "s/^.*: '//" | sed "s/'$//")"
   create-etcd-apiserver-certs "etcd-${REPLICA_NAME}" "${REPLICA_NAME}" "${ETCD_APISERVER_CA_CERT}" "${ETCD_APISERVER_CA_KEY}"
 
+  echo "abcdef 75"
   master_certs="$(echo "${master_certs}" | grep -v "ETCD_APISERVER_SERVER_KEY")"
+  echo "abcdef 77"
   master_certs="$(echo -e "${master_certs}\nETCD_APISERVER_SERVER_KEY: '${ETCD_APISERVER_SERVER_KEY_BASE64}'")"
   master_certs="$(echo "${master_certs}" | grep -v "ETCD_APISERVER_SERVER_CERT")"
   master_certs="$(echo -e "${master_certs}\nETCD_APISERVER_SERVER_CERT: '${ETCD_APISERVER_SERVER_CERT_BASE64}'")"
@@ -79,6 +83,7 @@ function replicate-master-instance() {
   master_certs="$(echo "${master_certs}" | grep -v "ETCD_APISERVER_CLIENT_CERT")"
   master_certs="$(echo -e "${master_certs}\nETCD_APISERVER_CLIENT_CERT: '${ETCD_APISERVER_CLIENT_CERT_BASE64}'")"
 
+  echo "abcdef 86 ${kube_env}"
   echo "${kube_env}" > ${KUBE_TEMP}/master-kube-env.yaml
   echo "${master_certs}" > ${KUBE_TEMP}/kube-master-certs.yaml
   get-metadata "${existing_master_zone}" "${existing_master_name}" cluster-name > "${KUBE_TEMP}/cluster-name.txt"

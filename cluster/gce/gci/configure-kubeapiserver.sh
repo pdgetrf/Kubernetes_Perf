@@ -27,6 +27,7 @@ function configure-etcd-params {
       params_ref+=" --etcd-servers=${ETCD_SERVERS:-http://127.0.0.1:2379}"
       echo "WARNING: ALL of ETCD_APISERVER_CA_KEY, ETCD_APISERVER_CA_CERT, ETCD_APISERVER_SERVER_KEY, ETCD_APISERVER_SERVER_CERT, ETCD_APISERVER_CLIENT_KEY and ETCD_APISERVER_CLIENT_CERT are missing, mTLS between etcd server and kube-apiserver is not enabled."
   else
+      echo "====== 1 $ETCD_APISERVER_CA_KEY, 2 $ETCD_APISERVER_CA_CERT, 3 $ETCD_APISERVER_SERVER_KEY, 4 $ETCD_APISERVER_SERVER_CERT, 5 $ETCD_APISERVER_CLIENT_KEY, 6 $ETCD_APISERVER_CLIENT_CERT"
       echo "ERROR: Some of ETCD_APISERVER_CA_KEY, ETCD_APISERVER_CA_CERT, ETCD_APISERVER_SERVER_KEY, ETCD_APISERVER_SERVER_CERT, ETCD_APISERVER_CLIENT_KEY and ETCD_APISERVER_CLIENT_CERT are missing, mTLS between etcd server and kube-apiserver cannot be enabled. Please provide all mTLS credential."
       exit 1
   fi
