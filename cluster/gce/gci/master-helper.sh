@@ -43,7 +43,6 @@ function create-master-instance {
 
 function replicate-master-instance() {
   echo "in replicate-master-instance"
-  set -x
   local existing_master_zone="${1}"
   local existing_master_name="${2}"
   local existing_master_replicas="${3}"

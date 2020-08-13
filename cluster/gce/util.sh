@@ -2280,6 +2280,7 @@ function create-node-template() {
 #   KUBE_ROOT
 #   <Various vars set in config file>
 function kube-up() {
+  echo "=========== ===== in kube-up"
   kube::util::ensure-temp-dir
   detect-project
 
@@ -2293,7 +2294,11 @@ function kube-up() {
   # ensure that environmental variables specifying number of migs to create
   set_num_migs
 
+  set -x
+  echo "=========== ${KUBE_USE_EXISTING_MASTER:-}, ${KUBE_REPLICATE_EXISTING_MASTER:-}"
+
   if [[ ${KUBE_USE_EXISTING_MASTER:-} == "true" ]]; then
+    echo "=========== in kube-up, not calling replicate-master"
     detect-master
     parse-master-env
     create-subnetworks
@@ -2312,11 +2317,13 @@ function kube-up() {
     fi
     create-loadbalancer
     # If replication of master fails, we need to ensure that the replica is removed from etcd clusters.
+    echo "=========== in kube-up, calling replicate-master"
     if ! replicate-master; then
       remove-replica-from-etcd 2379 true || true
       remove-replica-from-etcd 4002 false || true
     fi
   else
+    echo "=========== in kube-up, calling a bunch of stuff"
     check-existing
     create-network
     create-subnetworks
@@ -2634,7 +2641,6 @@ function delete-subnetworks() {
 #   ETCD_PEER_CERT_BASE64
 #
 function create-etcd-certs {
-  set -x
   local host=${1}
   local ca_cert=${2:-}
   local ca_key=${3:-}
@@ -2785,6 +2791,8 @@ function create-master() {
 # $3: whether etcd communication should use mtls
 # returns the result of ssh command which adds replica
 function add-replica-to-etcd() {
+  echo "in add-replica-to-etcd"
+  set -x
   local -r client_port="${1}"
   local -r internal_port="${2}"
   local -r use_mtls="${3}"
@@ -2821,7 +2829,6 @@ function replicate-master() {
 
   echo "Experimental: replicating existing master ${EXISTING_MASTER_ZONE}/${EXISTING_MASTER_NAME} as ${ZONE}/${REPLICA_NAME}"
 
-  set -x
   # Before we do anything else, we should configure etcd to expect more replicas.
   if ! add-replica-to-etcd 2379 2380 true; then
     echo "Failed to add master replica to etcd cluster."
@@ -3907,12 +3914,21 @@ function test-setup() {
   # Detect the project into $PROJECT if it isn't set
   detect-project
 
+  echo "=========== ===== in test-setup with E2E_ZONES = ${E2E_ZONES:-}"
+  set -x
+  #KUBE_USE_EXISTING_MASTER=${KUBE_USE_EXISTING_MASTER-"not set"}
+  #KUBE_REPLICATE_EXISTING_MASTER=${KUBE_REPLICATE_EXISTING_MASTER-"not set"}
+  #E2E_ZONES=${E2E_ZONES-"not set "}
+  #echo "===${KUBE_USE_EXISTING_MASTER} ${KUBE_REPLICATE_EXISTING_MASTER} ${E2E_ZONES}"
+
   if [[ ${MULTIZONE:-} == "true" && -n ${E2E_ZONES:-} ]]; then
     for KUBE_GCE_ZONE in ${E2E_ZONES}; do
+      echo "=========== calling kube-up.sh with KUBE_USE_EXISTING_MASTER=${KUBE_USE_EXISTING_MASTER:-}"
       KUBE_GCE_ZONE="${KUBE_GCE_ZONE}" KUBE_USE_EXISTING_MASTER="${KUBE_USE_EXISTING_MASTER:-}" "${KUBE_ROOT}/cluster/kube-up.sh"
       KUBE_USE_EXISTING_MASTER="true" # For subsequent zones we use the existing master
     done
   else
+      echo "=========== calling kube-up.sh without KUBE_USE_EXISTING_MASTER"
     "${KUBE_ROOT}/cluster/kube-up.sh"
   fi
 

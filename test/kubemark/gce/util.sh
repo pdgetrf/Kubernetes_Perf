@@ -32,6 +32,8 @@ function authenticate-docker {
 }
 
 function create-kubemark-master {
+    echo "===== in create-kubemark-master"
+    set -x
   # We intentionally override env vars in subshell to preserve original values.
   # shellcheck disable=SC2030,SC2031
   (
@@ -72,6 +74,7 @@ function create-kubemark-master {
       export "${dst_var}"="${val}"
     done
 
+    echo "calling e2e-up.sh first time"
     "${KUBE_ROOT}/hack/e2e-internal/e2e-up.sh"
 
     if [[ "${KUBEMARK_HA_MASTER:-}" == "true" && -n "${KUBEMARK_MASTER_ADDITIONAL_ZONES:-}" ]]; then

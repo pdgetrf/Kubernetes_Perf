@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -x
+echo "=========== in e2e-grow-cluster" 
+
 KUBE_ROOT=$(dirname "${BASH_SOURCE[0]}")/../..
 
 if [[ -n "${1:-}" ]]; then
@@ -32,4 +35,7 @@ if [[ -z "${NUM_NODES:-}" ]]; then
   export NUM_NODES=3
 fi
 
+echo "=========== ${KUBE_GCE_ZONE:-}, ${MULTIZONE:-}, ${KUBE_REPLICATE_EXISTING_MASTER:-}, ${KUBE_USE_EXISTING_MASTER-:}"
+
+echo "=========== calling e2e-up.sh 2nd time probably in e2e-grow-cluster"
 source "${KUBE_ROOT}/hack/e2e-internal/e2e-up.sh"
