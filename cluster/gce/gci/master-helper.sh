@@ -87,6 +87,8 @@ function replicate-master-instance() {
   get-metadata "${existing_master_zone}" "${existing_master_name}" gci-docker-version > "${KUBE_TEMP}/gci-docker-version.txt"
   get-metadata "${existing_master_zone}" "${existing_master_name}" cluster-location > "${KUBE_TEMP}/cluster-location.txt"
 
+  build-kubelet-config true "linux" "${KUBE_TEMP}/master-kubelet-config.yaml"
+
   create-master-instance-internal "${REPLICA_NAME}"
 }
 

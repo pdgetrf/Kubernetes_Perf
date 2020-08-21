@@ -8,6 +8,7 @@ load(
 go_library(
     name = "go_default_library",
     srcs = [
+        "basic_perf_tests.go",
         "configmap.go",
         "configmap_volume.go",
         "container.go",

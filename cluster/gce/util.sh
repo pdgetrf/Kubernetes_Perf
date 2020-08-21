@@ -2673,10 +2673,10 @@ function create-etcd-certs {
 function create-etcd-apiserver-certs {
   local hostServer=${1}
   local hostClient=${2}
-  local etcd_apiserver_ca_cert=${3:-}
-  local etcd_apiserver_ca_key=${4:-}
+  local ca_cert=${3:-}
+  local ca_key=${4:-}
 
-  GEN_ETCD_CA_CERT="${etcd_apiserver_ca_cert}" GEN_ETCD_CA_KEY="${etcd_apiserver_ca_key}" \
+  GEN_ETCD_CA_CERT="${ca_cert}" GEN_ETCD_CA_KEY="${ca_key}" \
     generate-etcd-cert "${KUBE_TEMP}/cfssl" "${hostServer}" "server" "etcd-apiserver-server"
     generate-etcd-cert "${KUBE_TEMP}/cfssl" "${hostClient}" "client" "etcd-apiserver-client"
 
